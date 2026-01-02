@@ -1579,10 +1579,6 @@ if (window.barba) {
   });
 }
 
-function __preventScroll(e) { 
-  e.preventDefault(); 
-}
-
 function initPopups() {
   document.removeEventListener("click", window.__popupDelegationHandler);
 
@@ -1615,18 +1611,14 @@ function initPopups() {
 
       gsap.set(popup, { autoAlpha: 0, display: "flex" });
 
-      // 1️⃣ Scrollposition zuerst merken
+      // 1️⃣ aktuelle Scroll-Position merken
       window.__lockScrollY = window.scrollY;
 
       // 2️⃣ Popup markieren
       popup.classList.add("popup-open");
 
-      // 3️⃣ Body HARD-LOCK (kein Durchscrollen, kein Springen)
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${window.__lockScrollY}px`;
-      document.body.style.left = "0";
-      document.body.style.right = "0";
-      document.body.style.width = "100%";
+      // 3️⃣ Hintergrund SOFORT sperren (kein Springen, kein „einmal scrollen“)
+      document.body.style.overflow = "hidden";
 
       gsap.to(popup, {
         autoAlpha: 1,
@@ -1688,16 +1680,11 @@ function initPopups() {
         popup.classList.remove("popup-open");
         popup.style.display = "none";
 
-        // Body freigeben & Position wiederherstellen
-        const y = window.__lockScrollY || 0;
+        // Scroll wieder erlauben
+        document.body.style.overflow = "";
 
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.left = "";
-        document.body.style.right = "";
-        document.body.style.width = "";
-
-        window.scrollTo(0, y);
+        // Zur ursprünglichen Position zurück
+        window.scrollTo(0, window.__lockScrollY || 0);
       }
     });
 
