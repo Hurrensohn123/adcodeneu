@@ -1557,7 +1557,7 @@ function initPopups() {
   window.__popupDelegationHandler = function (e) {
 
     // -----------------------------
-    // OPEN POPUP
+    // OPEN POPUP (button-X)
     // -----------------------------
     const btn = e.target.closest("[class^='button-']");
     if (btn) {
@@ -1582,20 +1582,22 @@ function initPopups() {
 
       gsap.set(popup, { autoAlpha: 0, display: "flex" });
 
-      // Scroll-Position merken
+      // SAVE SCROLL POSITION
       window.__lockScrollY = window.scrollY;
 
-      // Status setzen
-      window.__popupIsOpen = true;
+      // iOS-SAFE BODY LOCK (kein Springen, kein „einmal scrollen“)
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${window.__lockScrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+
+      // Lenis pausieren
+      if (window.lenis?.stop) {
+        try { lenis.stop(); } catch(e){}
+      }
+
       popup.classList.add("popup-open");
-
-      // Hintergrund sperren
-      document.body.style.overflow = "hidden";
-
-      // 🚫 Scroll-Engine pausieren
-      if (window.lenis) lenis.stop?.();
-      if (window.ScrollTrigger)
-        ScrollTrigger.getAll().forEach(t => t.disable());
 
       gsap.to(popup, {
         autoAlpha: 1,
@@ -1607,7 +1609,7 @@ function initPopups() {
     }
 
     // -----------------------------
-    // CLICK ON BACKGROUND
+    // CLICK ON BACKGROUND (close)
     // -----------------------------
     const bg = e.target.closest(".popup-background");
     if (bg) {
@@ -1616,7 +1618,7 @@ function initPopups() {
     }
 
     // -----------------------------
-    // CLICK ON X
+    // CLICK ON X (close)
     // -----------------------------
     const closeBtn = e.target.closest(".popup-close");
     if (closeBtn) {
@@ -1627,17 +1629,16 @@ function initPopups() {
 
   document.addEventListener("click", window.__popupDelegationHandler);
 
-  // -----------------------------
-  // FIND REAL WRAPPER
-  // -----------------------------
+
   function getPopupWrapper(el) {
     let popup = el.closest("[class^='popup-wrapper-']");
     if (!popup) popup = el.closest("[class*='popup-wrapper']");
     return popup;
   }
 
+
   // -----------------------------
-  // CLOSE POPUP
+  // CLOSE
   // -----------------------------
   function closePopup(popup) {
     if (!popup) return;
@@ -1656,21 +1657,20 @@ function initPopups() {
         popup.classList.remove("popup-open");
         popup.style.display = "none";
 
-        // Status zurück
-        window.__popupIsOpen = false;
+        // BODY UNLOCK
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
 
-        // Scroll wieder erlauben
-        document.body.style.overflow = "";
-
-        // ✅ Scroll-Engine wieder aktivieren
-        if (window.lenis) lenis.start?.();
-        if (window.ScrollTrigger) {
-          ScrollTrigger.getAll().forEach(t => t.enable());
-          ScrollTrigger.refresh(true);
-        }
-
-        // zur alten Position springen
+        // jump back to scroll position
         window.scrollTo(0, window.__lockScrollY || 0);
+
+        // Lenis wieder starten
+        if (window.lenis?.start) {
+          try { lenis.start(); } catch(e){}
+        }
       }
     });
 
