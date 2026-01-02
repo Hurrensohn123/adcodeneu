@@ -1566,7 +1566,6 @@ function initPopups() {
 
       const number = btnClass.split("-")[1];
 
-      // findet Popup – egal ob wrapper-1 ODER wrapper_content-1
       let popup =
         document.querySelector(".popup-wrapper-" + number) ||
         document.querySelector(".popup-wrapper_content-" + number);
@@ -1583,13 +1582,14 @@ function initPopups() {
 
       gsap.set(popup, { autoAlpha: 0, display: "flex" });
 
-      // 1️⃣ aktuelle Scroll-Position merken
+      // 1️⃣ Scroll-Position merken
       window.__lockScrollY = window.scrollY;
 
-      // 2️⃣ Popup markieren
+      // 2️⃣ Status: Popup ist offen
+      window.__popupIsOpen = true;
       popup.classList.add("popup-open");
 
-      // 3️⃣ Hintergrund SOFORT sperren (kein Springen, kein „einmal scrollen“)
+      // 3️⃣ Hintergrund SOFORT sperren
       document.body.style.overflow = "hidden";
 
       gsap.to(popup, {
@@ -1626,7 +1626,6 @@ function initPopups() {
   // ALWAYS resolve the REAL WRAPPER
   // -----------------------------
   function getPopupWrapper(el) {
-    // bevorzugt echte wrapper-1/2/3/4
     let popup = el.closest("[class^='popup-wrapper-']");
     if (!popup) popup = el.closest("[class*='popup-wrapper']");
     return popup;
@@ -1652,10 +1651,13 @@ function initPopups() {
         popup.classList.remove("popup-open");
         popup.style.display = "none";
 
-        // Scroll wieder erlauben
+        // 1️⃣ Status zurück
+        window.__popupIsOpen = false;
+
+        // 2️⃣ Scroll wieder erlauben
         document.body.style.overflow = "";
 
-        // Zur ursprünglichen Position zurück
+        // 3️⃣ Zur Ausgangs-Position springen
         window.scrollTo(0, window.__lockScrollY || 0);
       }
     });
@@ -1669,6 +1671,7 @@ function initPopups() {
       });
     }
   }
+}
 }
   
 function initStaggerLinks() {
@@ -1755,3 +1758,5 @@ let interval = setInterval(tick, 1000);
 window.addEventListener("load", () => {
   if (window.lenis) window.lenis.start();
 });
+// globaler Status – sagt uns, ob ein Popup offen ist
+window.__popupIsOpen = false;
