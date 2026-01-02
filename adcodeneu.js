@@ -72,7 +72,7 @@ function init3DCarousel() {
       animating = true;
       $("html, body").animate(
         {
-          scrollTop: activePanel.offset().top,
+          scrollTop: window.__popupIsOpen ? window.scrollY : activePanel.offset().top,
         },
         600,
         () => {
