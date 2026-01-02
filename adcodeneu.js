@@ -1675,12 +1675,6 @@ if (window.ScrollTrigger) {
         if (window.lenis?.start) {
           try { lenis.start(); } catch(e){}
         }
-
-        // ScrollTrigger wieder aktivieren
-        if (window.__pausedTriggers) {
-          window.__pausedTriggers.forEach(t => t.enable());
-          window.__pausedTriggers = null;
-        }
       }
     });
 
