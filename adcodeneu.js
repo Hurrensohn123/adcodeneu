@@ -1610,7 +1610,10 @@ function initPopups() {
         duration: 0.35,
         ease: "power2.out"
       });
-
+      // Layout neu messen — wichtig für den Kreis-Slider
+if (window.ScrollTrigger) {
+  ScrollTrigger.refresh();
+}
       return;
     }
 
