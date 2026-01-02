@@ -1579,6 +1579,10 @@ if (window.barba) {
   });
 }
 
+function __preventScroll(e) { 
+  e.preventDefault(); 
+}
+
 function initPopups() {
   document.removeEventListener("click", window.__popupDelegationHandler);
 
@@ -1618,6 +1622,10 @@ function initPopups() {
       popup.classList.add("popup-open");
       document.documentElement.classList.add("popup-open");
       document.body.classList.add("popup-open");
+      
+      // Scroll SOFORT blocken
+document.addEventListener("wheel", __preventScroll, { passive: false });
+document.addEventListener("touchmove", __preventScroll, { passive: false });
 
       // 3️⃣ Body an alter Position festnageln
       document.body.style.top = `-${window.__lockScrollY}px`;
@@ -1684,6 +1692,10 @@ function initPopups() {
 
         document.documentElement.classList.remove("popup-open");
         document.body.classList.remove("popup-open");
+        
+        // Scroll wieder erlauben
+document.removeEventListener("wheel", __preventScroll);
+document.removeEventListener("touchmove", __preventScroll);
 
         // Body zurücksetzen & an alte Position springen
         const y = window.__lockScrollY || 0;
