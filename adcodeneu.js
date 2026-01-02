@@ -1610,17 +1610,17 @@ function initPopups() {
       if (bg) gsap.set(bg, { autoAlpha: 1, pointerEvents: "auto" });
 
       gsap.set(popup, { autoAlpha: 0, display: "flex" });
-      popup.classList.add("popup-open");
+
       // 1️⃣ Scrollposition zuerst merken
-window.__lockScrollY = window.scrollY;
+      window.__lockScrollY = window.scrollY;
 
-// 2️⃣ Popup & Body sperren
-popup.classList.add("popup-open");
-document.documentElement.classList.add("popup-open");
-document.body.classList.add("popup-open");
+      // 2️⃣ Popup & Body sperren
+      popup.classList.add("popup-open");
+      document.documentElement.classList.add("popup-open");
+      document.body.classList.add("popup-open");
 
-// 3️⃣ Body an alter Position „festnageln“
-document.body.style.top = `-${window.__lockScrollY}px`;
+      // 3️⃣ Body an alter Position festnageln
+      document.body.style.top = `-${window.__lockScrollY}px`;
 
       gsap.to(popup, {
         autoAlpha: 1,
@@ -1681,10 +1681,11 @@ document.body.style.top = `-${window.__lockScrollY}px`;
       onComplete: () => {
         popup.classList.remove("popup-open");
         popup.style.display = "none";
-        // >>> NEU
+
         document.documentElement.classList.remove("popup-open");
         document.body.classList.remove("popup-open");
-          // Body zurücksetzen & an alte Position springen
+
+        // Body zurücksetzen & an alte Position springen
         const y = window.__lockScrollY || 0;
         document.body.style.top = "";
         window.scrollTo(0, y);
