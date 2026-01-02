@@ -1434,34 +1434,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("Setup abgeschlossen");
 
-  function forceScrollFreedom() {
-    const html = document.documentElement;
-    const body = document.body;
-
-    html.style.overflow = "visible";
-    body.style.overflow = "visible";
-
-    html.style.height = "auto";
-    body.style.height = "auto";
-
-    if (window.lenis) {
-      try {
-        lenis.start();
-      } catch (e) {}
-    }
-  }
-
-  document.addEventListener("readystatechange", forceScrollFreedom);
-  window.addEventListener("load", forceScrollFreedom);
-
-  if (window.barba) {
-    barba.hooks.afterEnter(forceScrollFreedom);
-    barba.hooks.after(forceScrollFreedom);
-  }
-
-  setInterval(forceScrollFreedom, 500);
-});
-
 function initProfileAnimation() {
   const trigger = document.querySelector(".lottie-inner");
   const first = document.querySelector(".first-name");
