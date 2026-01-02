@@ -1611,13 +1611,16 @@ function initPopups() {
 
       gsap.set(popup, { autoAlpha: 0, display: "flex" });
       popup.classList.add("popup-open");
-      // >>> NEU
-      document.documentElement.classList.add("popup-open");
-      document.body.classList.add("popup-open");
-      
-      // Scroll-Position merken & Body einfrieren
-     window.__lockScrollY = window.scrollY;
-     document.body.style.top = `-${window.__lockScrollY}px`;
+      // 1️⃣ Scrollposition zuerst merken
+window.__lockScrollY = window.scrollY;
+
+// 2️⃣ Popup & Body sperren
+popup.classList.add("popup-open");
+document.documentElement.classList.add("popup-open");
+document.body.classList.add("popup-open");
+
+// 3️⃣ Body an alter Position „festnageln“
+document.body.style.top = `-${window.__lockScrollY}px`;
 
       gsap.to(popup, {
         autoAlpha: 1,
