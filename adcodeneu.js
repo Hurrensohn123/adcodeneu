@@ -1585,7 +1585,7 @@ function initPopups() {
       // SAVE SCROLL POSITION
       window.__lockScrollY = window.scrollY;
 
-      // iOS-SAFE BODY LOCK (kein Springen, kein „einmal scrollen“)
+      // iOS-SAFE LOCK (Body festnageln)
       document.body.style.position = "fixed";
       document.body.style.top = `-${window.__lockScrollY}px`;
       document.body.style.left = "0";
@@ -1595,6 +1595,12 @@ function initPopups() {
       // Lenis pausieren
       if (window.lenis?.stop) {
         try { lenis.stop(); } catch(e){}
+      }
+
+      // SCROLLTRIGGER nur pausieren (nicht löschen)
+      if (window.ScrollTrigger) {
+        window.__pausedTriggers = ScrollTrigger.getAll();
+        window.__pausedTriggers.forEach(t => t.disable(false, true));
       }
 
       popup.classList.add("popup-open");
@@ -1630,6 +1636,7 @@ function initPopups() {
   document.addEventListener("click", window.__popupDelegationHandler);
 
 
+  // Resolve wrapper
   function getPopupWrapper(el) {
     let popup = el.closest("[class^='popup-wrapper-']");
     if (!popup) popup = el.closest("[class*='popup-wrapper']");
@@ -1657,19 +1664,25 @@ function initPopups() {
         popup.classList.remove("popup-open");
         popup.style.display = "none";
 
-        // BODY UNLOCK
+        // BODY unlock
         document.body.style.position = "";
         document.body.style.top = "";
         document.body.style.left = "";
         document.body.style.right = "";
         document.body.style.width = "";
 
-        // jump back to scroll position
+        // zurück zur alten Position
         window.scrollTo(0, window.__lockScrollY || 0);
 
-        // Lenis wieder starten
+        // Lenis weiter
         if (window.lenis?.start) {
           try { lenis.start(); } catch(e){}
+        }
+
+        // ScrollTrigger wieder aktivieren
+        if (window.__pausedTriggers) {
+          window.__pausedTriggers.forEach(t => t.enable());
+          window.__pausedTriggers = null;
         }
       }
     });
