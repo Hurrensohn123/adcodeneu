@@ -1614,6 +1614,10 @@ function initPopups() {
       // >>> NEU
       document.documentElement.classList.add("popup-open");
       document.body.classList.add("popup-open");
+      
+      // Scroll-Position merken & Body einfrieren
+     window.__lockScrollY = window.scrollY;
+     document.body.style.top = `-${window.__lockScrollY}px`;
 
       gsap.to(popup, {
         autoAlpha: 1,
@@ -1677,6 +1681,10 @@ function initPopups() {
         // >>> NEU
         document.documentElement.classList.remove("popup-open");
         document.body.classList.remove("popup-open");
+          // Body zurücksetzen & an alte Position springen
+        const y = window.__lockScrollY || 0;
+        document.body.style.top = "";
+        window.scrollTo(0, y);
       }
     });
 
