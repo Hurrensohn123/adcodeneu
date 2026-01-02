@@ -1618,17 +1618,15 @@ function initPopups() {
       // 1️⃣ Scrollposition zuerst merken
       window.__lockScrollY = window.scrollY;
 
-      // 2️⃣ Popup & Body sperren
+      // 2️⃣ Popup markieren
       popup.classList.add("popup-open");
-      document.documentElement.classList.add("popup-open");
-      document.body.classList.add("popup-open");
-      
-      // Scroll SOFORT blocken
-document.addEventListener("wheel", __preventScroll, { passive: false });
-document.addEventListener("touchmove", __preventScroll, { passive: false });
 
-      // 3️⃣ Body an alter Position festnageln
+      // 3️⃣ Body HARD-LOCK (kein Durchscrollen, kein Springen)
+      document.body.style.position = "fixed";
       document.body.style.top = `-${window.__lockScrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
 
       gsap.to(popup, {
         autoAlpha: 1,
@@ -1690,16 +1688,15 @@ document.addEventListener("touchmove", __preventScroll, { passive: false });
         popup.classList.remove("popup-open");
         popup.style.display = "none";
 
-        document.documentElement.classList.remove("popup-open");
-        document.body.classList.remove("popup-open");
-        
-        // Scroll wieder erlauben
-document.removeEventListener("wheel", __preventScroll);
-document.removeEventListener("touchmove", __preventScroll);
-
-        // Body zurücksetzen & an alte Position springen
+        // Body freigeben & Position wiederherstellen
         const y = window.__lockScrollY || 0;
+
+        document.body.style.position = "";
         document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+
         window.scrollTo(0, y);
       }
     });
