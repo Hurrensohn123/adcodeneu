@@ -1751,3 +1751,7 @@ function initStaggerLinks() {
 
 let interval = setInterval(tick, 1000);
 }
+
+window.addEventListener("load", () => {
+  if (window.lenis) window.lenis.start();
+});
