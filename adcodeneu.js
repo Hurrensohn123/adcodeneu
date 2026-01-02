@@ -1597,12 +1597,6 @@ function initPopups() {
         try { lenis.stop(); } catch(e){}
       }
 
-      // SCROLLTRIGGER nur pausieren (nicht löschen)
-      if (window.ScrollTrigger) {
-        window.__pausedTriggers = ScrollTrigger.getAll();
-        window.__pausedTriggers.forEach(t => t.disable(false, true));
-      }
-
       popup.classList.add("popup-open");
 
       gsap.to(popup, {
