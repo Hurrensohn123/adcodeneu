@@ -1611,6 +1611,9 @@ function initPopups() {
 
       gsap.set(popup, { autoAlpha: 0, display: "flex" });
       popup.classList.add("popup-open");
+      // >>> NEU
+      document.documentElement.classList.add("popup-open");
+      document.body.classList.add("popup-open");
 
       gsap.to(popup, {
         autoAlpha: 1,
@@ -1671,6 +1674,9 @@ function initPopups() {
       onComplete: () => {
         popup.classList.remove("popup-open");
         popup.style.display = "none";
+        // >>> NEU
+        document.documentElement.classList.remove("popup-open");
+        document.body.classList.remove("popup-open");
       }
     });
 
