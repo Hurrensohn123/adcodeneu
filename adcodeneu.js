@@ -1557,7 +1557,7 @@ function initPopups() {
   window.__popupDelegationHandler = function (e) {
 
     // -----------------------------
-    // OPEN POPUP (button-X)
+    // OPEN POPUP
     // -----------------------------
     const btn = e.target.closest("[class^='button-']");
     if (btn) {
@@ -1582,15 +1582,20 @@ function initPopups() {
 
       gsap.set(popup, { autoAlpha: 0, display: "flex" });
 
-      // 1️⃣ Scroll-Position merken
+      // Scroll-Position merken
       window.__lockScrollY = window.scrollY;
 
-      // 2️⃣ Status: Popup ist offen
+      // Status setzen
       window.__popupIsOpen = true;
       popup.classList.add("popup-open");
 
-      // 3️⃣ Hintergrund SOFORT sperren
+      // Hintergrund sperren
       document.body.style.overflow = "hidden";
+
+      // 🚫 Scroll-Engine pausieren
+      if (window.lenis) lenis.stop?.();
+      if (window.ScrollTrigger)
+        ScrollTrigger.getAll().forEach(t => t.disable());
 
       gsap.to(popup, {
         autoAlpha: 1,
@@ -1602,7 +1607,7 @@ function initPopups() {
     }
 
     // -----------------------------
-    // CLICK ON BACKGROUND (close)
+    // CLICK ON BACKGROUND
     // -----------------------------
     const bg = e.target.closest(".popup-background");
     if (bg) {
@@ -1611,7 +1616,7 @@ function initPopups() {
     }
 
     // -----------------------------
-    // CLICK ON X (close)
+    // CLICK ON X
     // -----------------------------
     const closeBtn = e.target.closest(".popup-close");
     if (closeBtn) {
@@ -1623,7 +1628,7 @@ function initPopups() {
   document.addEventListener("click", window.__popupDelegationHandler);
 
   // -----------------------------
-  // ALWAYS resolve the REAL WRAPPER
+  // FIND REAL WRAPPER
   // -----------------------------
   function getPopupWrapper(el) {
     let popup = el.closest("[class^='popup-wrapper-']");
@@ -1632,7 +1637,7 @@ function initPopups() {
   }
 
   // -----------------------------
-  // CLOSE LOGIC
+  // CLOSE POPUP
   // -----------------------------
   function closePopup(popup) {
     if (!popup) return;
@@ -1651,13 +1656,20 @@ function initPopups() {
         popup.classList.remove("popup-open");
         popup.style.display = "none";
 
-        // 1️⃣ Status zurück
+        // Status zurück
         window.__popupIsOpen = false;
 
-        // 2️⃣ Scroll wieder erlauben
+        // Scroll wieder erlauben
         document.body.style.overflow = "";
 
-        // 3️⃣ Zur Ausgangs-Position springen
+        // ✅ Scroll-Engine wieder aktivieren
+        if (window.lenis) lenis.start?.();
+        if (window.ScrollTrigger) {
+          ScrollTrigger.getAll().forEach(t => t.enable());
+          ScrollTrigger.refresh(true);
+        }
+
+        // zur alten Position springen
         window.scrollTo(0, window.__lockScrollY || 0);
       }
     });
@@ -1671,7 +1683,6 @@ function initPopups() {
       });
     }
   }
-}
 }
   
 function initStaggerLinks() {
